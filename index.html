@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Painel de Links (ZOLY)</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{
+  --bg: #0f1720; --surface: #101418; --muted: #94a3b8; --accent: #8ea6ff;
+  --success: #2ecc71; --danger: #ef4444; --card: #0b1220; --glass: rgba(255,255,255,0.03);
+  --soft: rgba(255,255,255,0.02); --text: #e6eef8; --text-muted: #c3d3f5; --shadow: 0 6px 18px rgba(3,6,12,0.6);
+}
+[data-theme="light"]{
+  --bg: #eef2f7; --surface: #ffffff; --muted: #6b7280; --accent: #1a73e8;
+  --success: #28a745; --danger: #dc3545; --card: #ffffff; --glass: rgba(0,0,0,0.02);
+  --soft: rgba(0,0,0,0.03); --text: #1f2937; --text-muted: #475569; --shadow: 0 4px 12px rgba(15,23,42,0.06);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body {margin:0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto; background: var(--bg); color:var(--text); padding:20px; transition: background 260ms,color 260ms;}
+h1{text-align:center; margin:6px 0 18px 0; font-weight:600;}
+#loginScreen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh; }
+#loginScreen input, #loginScreen button { font-size: 15px; padding: 10px; margin: 6px 0; border-radius: 10px; }
+#loginScreen input { width: 260px; border: 1px solid var(--soft); background: var(--surface); color: var(--text); }
+#loginScreen button { border: none; background-color: var(--accent); color: #fff; cursor: pointer; padding:10px 18px; border-radius:10px; box-shadow: var(--shadow); }
+#loginScreen button:hover { filter:brightness(.95); transform:translateY(-1px); }
+
+.container { max-width:1100px; margin: 12px auto; }
+#panelScreen { display: none; max-width: 1000px; margin: auto; }
+
+.headerRow { display:flex; align-items:center; gap:12px; justify-content:space-between; margin-bottom:14px; }
+.leftHeader { display:flex; align-items:center; gap:12px; }
+#greeting { font-size:20px; color:var(--accent); font-weight:600; }
+#datetime { font-size:13px; color:var(--text); background:var(--glass); padding:10px 14px; border-radius:12px; box-shadow: var(--shadow); }
+
+.controls { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+#searchInput { display: block; width: 100%; max-width: 420px; padding: 10px 12px; font-size: 14px; border-radius: 10px; border:1px solid var(--soft); background:var(--surface); color:var(--text); }
+
+#addLinkForm { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 14px; margin-bottom: 20px; gap:8px; }
+#addLinkForm input, #addLinkForm button { margin: 0; padding: 10px; border-radius: 10px; font-size: 14px; border:1px solid var(--soft); background:var(--surface); color:var(--text); }
+#addLinkForm input { width: 140px; }
+#addLinkBtn { background-color: var(--success); color: #fff; border:none; cursor:pointer; }
+#addLinkBtn:hover{filter:brightness(.95)}
+.actionBtn { background:transparent; border:1px solid var(--soft); color:var(--text); padding:9px 12px; border-radius:10px; cursor:pointer; }
+.actionBtn:hover{transform:translateY(-1px);}
+
+.section { margin-bottom: 14px; border-radius: 12px; box-shadow: 0 6px 18px rgba(3,6,12,0.6); overflow:hidden; background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent); }
+.section-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; cursor: pointer; border-radius: 12px 12px 0 0; color: var(--text); }
+.section-header h2 { margin: 0; font-size: 16px; display: flex; align-items:center; gap:8px; font-weight:600; color:var(--text); }
+.toggleBtn { font-size: 18px; background: none; border: none; color: var(--text); cursor: pointer; }
+.linksList { display: block; padding: 12px 16px; background: var(--card); }
+ul { list-style-type: none; padding: 0; margin: 0; }
+li { display: flex; align-items: center; margin: 8px 0; gap:8px; }
+
+.linkMain { display:flex; align-items:center; gap:12px; background: transparent; padding:8px 10px; border-radius:8px; flex:1; text-decoration:none; color:var(--text); cursor:pointer; }
+.linkMain:hover { background: var(--soft); transform: translateY(-2px); }
+.linkTitle { font-weight:600; color:var(--text); }
+.linkMeta { font-size:12px; color:var(--muted); margin-left:4px; }
+.linkObs { font-size:11px; color:var(--accent); background:var(--soft); padding:3px 6px; border-radius:6px; margin-left:8px; border: 1px dashed var(--soft); }
+
+.buttonsContainer { margin-left: auto; display: flex; gap: 8px; align-items:center; }
+.linkBtn { padding: 8px 10px; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; display:flex; gap:8px; align-items:center; background:transparent; color:var(--text); border:1px solid var(--soft); }
+.linkBtn:hover{transform:translateY(-2px)}
+.editBtn { color: var(--accent); border-color: rgba(138, 146, 255, 0.15); }
+.deleteBtn { color:var(--danger); border-color: rgba(239,68,68,0.18); }
+.openBtn { color:var(--success); border-color: rgba(46,204,113,0.12); }
+
+#logoutBtn { display: inline-block; margin: 8px 0; padding: 10px 14px; border:none; border-radius:10px; background-color:var(--danger); color:#fff; cursor:pointer; }
+#logoutBtn:hover { filter:brightness(.95); transform:translateY(-1px); }
+
+#toastContainer { position: fixed; right: 18px; bottom: 18px; z-index: 9999; display:flex; flex-direction:column; gap:8px; align-items:flex-end; }
+.toast { background: rgba(10,12,16,0.9); color: #fff; padding:10px 14px; border-radius:10px; box-shadow: 0 8px 24px rgba(2,6,23,0.4); font-size:13px; opacity:0; transform:translateY(10px); transition: all 240ms ease; }
+.toast.show { opacity:1; transform:translateY(0); }
+
+@media (max-width:800px){
+  #addLinkForm input { width: 100%; }
+  .headerRow{ flex-direction:column; align-items:flex-start; gap:10px; }
+  .buttonsContainer{ gap:6px; }
+}
+
+/* ===================== Letreiro Topo ===================== */
+#marqueeTopContainer {
+  display:none;
+  width:100%;
+  overflow:hidden;
+  border-radius:10px;
+  background: var(--soft);
+  padding:10px 0;
+  margin:12px 0;
+  box-shadow: var(--shadow);
+}
+#marqueeTop {
+  display:inline-block;
+  white-space:nowrap;
+  padding-left:100%;
+  color: var(--accent);
+  font-weight:600;
+  font-size:16px;
+  animation: marqueeTop 15s linear infinite;
+}
+@keyframes marqueeTop {
+  0%{transform: translateX(100%);}
+  100%{transform: translateX(-100%);}
+}
+
+/* ===================== Modal Agenda ===================== */
+#agendaModal {
+  display:none;
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform: translate(-50%,-50%);
+  width:400px;
+  max-width:90%;
+  background:var(--card);
+  color:var(--text);
+  border-radius:12px;
+  box-shadow: var(--shadow);
+  padding:16px;
+  z-index:1000;
+}
+#agendaModal h2{margin-top:0; color:var(--accent);}
+#agendaModalClose{
+  position:absolute;
+  top:10px;
+  right:12px;
+  background:none;
+  border:none;
+  color:var(--text);
+  font-size:18px;
+  cursor:pointer;
+}
+#agendaForm{display:flex; gap:8px; margin-bottom:12px;}
+#agendaForm input{
+  flex:1;
+  padding:8px 10px;
+  border-radius:10px;
+  border:1px solid var(--soft);
+  background:var(--surface);
+  color:var(--text);
+}
+#agendaForm button{
+  padding:8px 12px;
+  border:none;
+  border-radius:10px;
+  background:var(--accent);
+  color:#fff;
+  cursor:pointer;
+  transition: all 200ms ease;
+}
+#agendaForm button:hover{filter:brightness(1.1); transform:translateY(-1px);}
+#agendaList{max-height:200px; overflow-y:auto;}
+#agendaList li{display:flex; justify-content:space-between; align-items:center; padding:6px 10px; background:var(--soft); border-radius:8px; margin-bottom:6px;}
+#agendaList li .btnGroup{display:flex; gap:4px;}
+#agendaList li button{padding:4px 8px; border:none; border-radius:6px; cursor:pointer; background:var(--accent); color:#fff; font-size:12px;}
+#sectionInput, #nameLinkInput {
+  text-transform: uppercase;
+}
+/* ===================== Modal Calendário Compacto ===================== */
+#calendarModal {
+  width: 320px;       
+  max-width: 90%;     
+  padding: 10px;      
+  border-radius: 10px;
+}
+
+#calendarModal h2 {
+  font-size: 16px;    
+  margin-bottom: 6px;
+}
+
+#calendarModal input, #calendarModal button {
+  font-size: 13px;    
+  padding: 5px 8px;
+  border-radius: 8px;
+}
+
+#calendarTable {
+  font-size: 12px;    
+}
+
+#calendarList {
+  max-height: 140px;  
+  font-size: 13px;
+}
+</style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <h1>Painel de Links (ZOLY)</h1>
+  <input type="text" id="nameInput" placeholder="Digite seu nome">
+  <input type="password" id="passwordInput" placeholder="Digite a senha">
+  <div style="display:flex; gap:8px;">
+    <button id="enterBtn">Entrar</button>
+    <button id="rememberBtn" class="actionBtn">Lembrar</button>
+  </div>
+  <small style="color:var(--muted); margin-top:8px;">Senha padrão: <strong>DESCUBRA</strong></small>
+</div>
+
+<div id="panelScreen">
+  <div class="headerRow">
+    <div class="leftHeader">
+      <div id="greeting">Olá!</div>
+      <div id="datetime">Carregando data e hora...</div>
+    </div>
+    <div class="controls">
+      <input id="searchInput" placeholder="Buscar por seção, nome, URL ou observação">
+      <button id="themeToggle" class="actionBtn" title="Alterar Tema">  <i class="fa-solid fa-sun"></i></button>
+      <button id="exportBtn" class="actionBtn" title="Exportar"><i class="fa-solid fa-download"></i></button>
+      <button id="importBtn" class="actionBtn" title="Importar"><i class="fa-solid fa-upload"></i></button>
+      <input type="file" id="importFile" accept="application/json" style="display:none">
+      <button id="estatBtn" class="actionBtn" title="Estatísticas">Estatísticas</button>
+      <button id="limparEstatBtn" class="actionBtn" title="Limpar Estatística">Limpar Estatísticas</button>
+      <button id="agendaBtn" class="actionBtn" title="Agenda de Mensagens">Agenda de Mensagens</button>
+      <button id="calendarBtn" class="actionBtn" title="Calendário">Calendário</button>
+      <button id="logoutBtn">Sair</button>
+    </div>
+  </div>
+
+  <!-- Letreiro Topo -->
+  <div id="marqueeTopContainer">
+    <div id="marqueeTop">Mensagem selecionada aparecerá aqui</div>
+  </div>
+
+  <!-- Tela de Estatísticas -->
+  <div id="estatisticas" style="display:none; padding:12px; background:var(--card); border-radius:10px; margin-bottom:12px; box-shadow:var(--shadow);">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <strong>Estatísticas do Painel</strong>
+      <button id="fecharEstatBtn" class="actionBtn">Fechar</button>
+    </div>
+    <div id="conteudoEstatisticas" style="margin-top:10px;"></div>
+  </div>
+
+  <div id="addLinkForm">
+      <input type="text" id="sectionInput" placeholder="Seção">
+      <input type="text" id="nameLinkInput" placeholder="Nome do Link">
+      <input type="text" id="urlInput" placeholder="URL do Link" value="https://">
+      <input type="text" id="obsInput" placeholder="Obs / Usuário / Senha">
+      <button id="addLinkBtn">Adicionar Link</button>
+  </div>
+
+  <div id="linksContainer"></div>
+
+  <!-- Painel Lateral Rolante de Mensagens Não Destacadas -->
+  <div id="sidePanelMarqueeContainer" style="
+      position: fixed;
+      top: 120px;
+      right: 20px;
+      width: 250px;
+      height: 30px;
+      background: var(--danger);
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      z-index: 999;
+      font-size: 12px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+  ">
+      <div id="sidePanelMarquee" style="
+          display: inline-block;
+          white-space: nowrap;
+          padding-left: 100%;
+          animation: sideMarquee 15s linear infinite;
+      ">Nenhuma mensagem pendente</div>
+  </div>
+
+  <style>
+  @keyframes sideMarquee {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+  }
+  </style>
+</div>
+
+<!-- Modal Agenda -->
+<div id="agendaModal">
+  <button id="agendaModalClose">&times;</button>
+  <h2>Agenda de Mensagens</h2>
+  <div id="agendaForm">
+    <input type="text" id="agendaInput" placeholder="Digite a mensagem">
+    <button id="agendaAddBtn">Adicionar</button>
+  </div>
+  <ul id="agendaList"></ul>
+</div>
+
+<!-- Modal Calendário Visual -->
+<div id="calendarModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:480px; max-width:95%; background:var(--card); color:var(--text); border-radius:12px; box-shadow: var(--shadow); padding:16px; z-index:1000;">
+  <button id="calendarClose" style="position:absolute; top:10px; right:12px; background:none; border:none; color:var(--text); font-size:18px; cursor:pointer;">&times;</button>
+  <h2>Calendário de Avisos</h2>
+  
+  <div style="display:flex; gap:8px; margin-bottom:8px;">
+    <input type="month" id="calendarMonth" style="flex:1; padding:6px 10px; border-radius:10px; border:1px solid var(--soft);">
+    <input type="text" id="calendarNote" placeholder="Digite um aviso/comentário" style="flex:2; padding:6px 10px; border-radius:10px; border:1px solid var(--soft);">
+    <button id="calendarAddBtn" style="padding:6px 12px; border:none; border-radius:10px; background:var(--accent); color:#fff; cursor:pointer;">Adicionar</button>
+  </div>
+
+  <table id="calendarTable" style="width:100%; border-collapse:collapse; text-align:center; margin-top:8px;">
+    <thead>
+      <tr style="background:var(--soft);"><th>Dom</th><th>Seg</th><th>Ter</th><th>Qua</th><th>Qui</th><th>Sex</th><th>Sáb</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <ul id="calendarList" style="margin-top:12px; max-height:180px; overflow-y:auto; list-style:none; padding:0;"></ul>
+</div>
+
+<div id="toastContainer"></div>
+
+<script>
+// ===================== Variáveis e utilitários =====================
+let currentUser=null;
+const PASSWORD="1234";
+let links=[];
+let sectionColors=JSON.parse(localStorage.getItem('sectionColors'))||{};
+const defaultLinks=[
+  { section: "Ecossistema", name: "Menu Ecossistema", url: "https://dealernet.atlassian.net/wiki/spaces/E/pages/1891566130/ECOSSISTEMA+-+DEALERNET+WF", obs: "", clicks: 0 },
+  { section: "Operacional", name: "Menu Operacional", url: "https://dealernet.atlassian.net/wiki/spaces/PDI/pages/1877704972/Dealer.Net+WF", obs: "", clicks: 0 },
+  { section: "Fiserv", name: "Configurar Sitef", url: "https://oauth.softwareexpress.com.br", obs: "", clicks: 0 }
+];
+
+function generateSoftColor(){ const colors=['#a8dadc','#f1faee','#ffe5d9','#cdb4db','#ffb4a2','#b5ead7','#fef9c3','#e0bbe4']; return colors[Math.floor(Math.random()*colors.length)]; }
+function getSectionColor(section){ if(!sectionColors[section]){ sectionColors[section]=generateSoftColor(); localStorage.setItem('sectionColors', JSON.stringify(sectionColors)); } return sectionColors[section]; }
+
+const THEME_KEY='zoly_theme';
+function applyTheme(theme){ document.documentElement.setAttribute('data-theme',theme==='light'?'light':'dark'); const icon=document.getElementById('themeToggle').querySelector('i'); icon.className=theme==='light'?'fa-solid fa-sun':'fa-solid fa-moon'; localStorage.setItem(THEME_KEY,theme); }
+applyTheme(localStorage.getItem(THEME_KEY)||'dark');
+
+document.getElementById('themeToggle').addEventListener('click', () => {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    applyTheme(currentTheme === 'light' ? 'dark' : 'light');
+});
+
+document.getElementById('exportBtn').addEventListener('click', () => {
+    const data = JSON.stringify(links, null, 2);
+    const blob = new Blob([data], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'links.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('Links exportados');
+});
+
+const importFileInput = document.getElementById('importFile');
+document.getElementById('importBtn').addEventListener('click', () => { importFileInput.click(); });
+
+importFileInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            links = JSON.parse(e.target.result);
+            saveUserLinks();
+            renderLinks();
+            showToast('Links importados com sucesso');
+        } catch {
+            showToast('Erro ao importar links');
+        }
+    };
+    reader.readAsText(file);
+});
+
+document.getElementById('limparEstatBtn').addEventListener('click', () => {
+    links.forEach(l => l.clicks = 0);
+    saveUserLinks();
+    renderStats();
+    showToast('Estatísticas limpas');
+});
+
+function updateDateTime(){ 
+  const now=new Date(); 
+  const options={ weekday:'long', year:'numeric', month:'long', day:'numeric' }; 
+  document.getElementById('datetime').innerText=`${now.toLocaleDateString('pt-BR',options)} - ${now.toLocaleTimeString('pt-BR')}`; 
+  if(currentUser){ 
+    const hour=now.getHours(); 
+    const greet=hour<12?'Bom dia':(hour<18?'Boa tarde':'Boa noite'); 
+    document.getElementById('greeting').innerText=`${greet}, ${currentUser}!`; 
+  } 
+}
+setInterval(updateDateTime,1000);
+
+function getUserKey(){ return `links_${currentUser?currentUser.toLowerCase():'anon'}`; }
+function loadUserLinks(){ 
+  const saved=localStorage.getItem(getUserKey()); 
+  links=saved?JSON.parse(saved):defaultLinks.map(l=>({...l})); 
+  links=links.map(l=>({ obs: l.obs || '', clicks:0, ...l })); 
+}
+function saveUserLinks(){ localStorage.setItem(getUserKey(),JSON.stringify(links)); localStorage.setItem('sectionColors',JSON.stringify(sectionColors)); }
+
+const toastContainer=document.getElementById('toastContainer');
+function showToast(msg,timeout=2500){ 
+  const d=document.createElement('div'); 
+  d.className='toast'; 
+  d.innerText=msg; 
+  toastContainer.appendChild(d); 
+  requestAnimationFrame(()=>d.classList.add('show')); 
+  setTimeout(()=>{d.classList.remove('show'); setTimeout(()=>d.remove(),300);},timeout); 
+}
+
+// ===================== Render Links com Observação e Edição =====================
+function renderLinks(filtered = null) {
+    const container = document.getElementById('linksContainer');
+    container.innerHTML = '';
+
+    const displayLinks = filtered || links;
+    const sections = {};
+    displayLinks.forEach(l => {
+        if (!sections[l.section]) sections[l.section] = [];
+        sections[l.section].push(l);
+    });
+
+    Object.keys(sections).forEach(sec => {
+        const secDiv = document.createElement('div');
+        secDiv.className = 'section';
+
+        const secHeader = document.createElement('div');
+        secHeader.className = 'section-header';
+
+        const secTitle = document.createElement('h2');
+        secTitle.innerText = sec;
+        secTitle.style.color = getSectionColor(sec);
+        secHeader.appendChild(secTitle);
+
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'toggleBtn';
+        toggleBtn.innerHTML = '<i class="fa-solid fa-chevron-down"></i>';
+        secHeader.appendChild(toggleBtn);
+
+        const linksList = document.createElement('div');
+        linksList.className = 'linksList';
+        linksList.style.display = 'none';
+
+        secHeader.addEventListener('click', () => {
+            if (linksList.style.display === 'none') {
+                linksList.style.display = 'block';
+                toggleBtn.innerHTML = '<i class="fa-solid fa-chevron-up"></i>';
+            } else {
+                linksList.style.display = 'none';
+                toggleBtn.innerHTML = '<i class="fa-solid fa-chevron-down"></i>';
+            }
+        });
+
+        sections[sec].forEach(l => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.className = 'linkMain';
+            if(!/^https?:\/\//i.test(l.url)) l.url = 'https://' + l.url;
+            a.href = l.url;
+            a.target = '_blank';
+            
+            let htmlContent = `<span class="linkTitle">${l.name}</span><span class="linkMeta">${l.url}</span>`;
+            if(l.obs && l.obs.trim() !== "") {
+                htmlContent += `<span class="linkObs"><i class="fa-solid fa-key"></i> ${l.obs}</span>`;
+            }
+            a.innerHTML = htmlContent;
+            
+            a.addEventListener('click', (e) => {
+                e.preventDefault();
+                l.clicks++;
+                saveUserLinks();
+                window.open(l.url, '_blank');
+            });
+
+            const btnsDiv = document.createElement('div');
+            btnsDiv.className = 'buttonsContainer';
+
+            // Botão Editar (Carrega dados de volta, inclusive a observação)
+            const editBtn = document.createElement('button');
+            editBtn.className = 'linkBtn editBtn';
+            editBtn.innerHTML = '<i class="fa-solid fa-pen"></i>';
+            editBtn.addEventListener('click', () => {
+                document.getElementById('sectionInput').value = l.section;
+                document.getElementById('nameLinkInput').value = l.name;
+                document.getElementById('urlInput').value = l.url;
+                document.getElementById('obsInput').value = l.obs || '';
+                links = links.filter(ln => ln !== l);
+                saveUserLinks();
+                renderLinks();
+                showToast('Modo de edição: ajuste os campos acima e clique em Adicionar');
+            });
+            btnsDiv.appendChild(editBtn);
+
+            // Botão Deletar
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'linkBtn deleteBtn';
+            deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+            deleteBtn.addEventListener('click', () => {
+                links = links.filter(ln => ln !== l);
+                saveUserLinks();
+                renderLinks();
+                showToast('Link removido');
+            });
+            btnsDiv.appendChild(deleteBtn);
+
+            // Botão Abrir
+            const openBtn = document.createElement('button');
+            openBtn.className = 'linkBtn openBtn';
+            openBtn.innerHTML = '<i class="fa-solid fa-arrow-up-right-from-square"></i>';
+            openBtn.addEventListener('click', () => window.open(l.url, '_blank'));
+            btnsDiv.appendChild(openBtn);
+
+            li.appendChild(a);
+            li.appendChild(btnsDiv);
+            linksList.appendChild(li);
+        });
+
+        secDiv.appendChild(secHeader);
+        secDiv.appendChild(linksList);
+        container.appendChild(secDiv);
+    });
+}
+
+// ===================== Login =====================
+document.getElementById('enterBtn').addEventListener('click',()=>{
+  const name=document.getElementById('nameInput').value.trim();
+  const pass=document.getElementById('passwordInput').value;
+  if(pass!==PASSWORD){showToast('Senha incorreta!'); return;}
+  currentUser=name||'Usuário'; 
+  document.getElementById('loginScreen').style.display='none'; 
+  document.getElementById('panelScreen').style.display='block';
+  updateDateTime(); loadUserLinks(); renderLinks(); renderAgenda();
+});
+
+// ===================== Agenda de Mensagens =====================
+let agendaMessages=JSON.parse(localStorage.getItem('agendaMessages'))||[];
+let selectedMessageIndex=null;
+const agendaBtn=document.getElementById('agendaBtn');
+const agendaModal=document.getElementById('agendaModal');
+const agendaModalClose=document.getElementById('agendaModalClose');
+const agendaInput=document.getElementById('agendaInput');
+const agendaAddBtn=document.getElementById('agendaAddBtn');
+const agendaList=document.getElementById('agendaList');
+const marqueeTopContainer=document.getElementById('marqueeTopContainer');
+const marqueeTop=document.getElementById('marqueeTop');
+
+function saveAgenda(){ localStorage.setItem('agendaMessages',JSON.stringify(agendaMessages)); }
+
+function renderAgenda(){
+  agendaList.innerHTML='';
+  agendaMessages.forEach((msg,i)=>{
+    const li=document.createElement('li'); li.innerText=msg;
+    const btnGroup=document.createElement('div'); btnGroup.className='btnGroup';
+    const selectBtn=document.createElement('button'); selectBtn.innerText='Destacar';
+    selectBtn.addEventListener('click',()=>{
+      selectedMessageIndex=i; marqueeTop.innerText=msg; marqueeTopContainer.style.display='block';
+      saveAgenda(); showToast('Mensagem destacada');
+      updateSidePanel();
+    });
+    const delBtn=document.createElement('button'); delBtn.innerText='Excluir'; delBtn.style.background='var(--danger)';
+    delBtn.addEventListener('click',()=>{
+      agendaMessages.splice(i,1);
+      if(selectedMessageIndex===i){marqueeTopContainer.style.display='none'; selectedMessageIndex=null;}
+      saveAgenda(); renderAgenda(); showToast('Mensagem removida');
+      updateSidePanel();
+    });
+    btnGroup.appendChild(selectBtn); btnGroup.appendChild(delBtn); li.appendChild(btnGroup);
+    agendaList.appendChild(li);
+  });
+  updateSidePanel();
+}
+
+agendaBtn.addEventListener('click',()=>{ agendaModal.style.display='block'; renderAgenda(); showAlertWithSound("Abrindo Agenda de Mensagens!");});
+agendaModalClose.addEventListener('click',()=>{ agendaModal.style.display='none'; });
+agendaAddBtn.addEventListener('click',()=>{
+  const msg=agendaInput.value.trim(); if(!msg){showToast('Digite uma mensagem'); return;}
+  agendaMessages.push(msg); agendaInput.value=''; renderAgenda(); saveAgenda();
+});
+
+function updateSideMarquee() {
+    const marquee = document.getElementById('sidePanelMarquee');
+    const pendingMessages = agendaMessages.filter((_,i) => i !== selectedMessageIndex);
+    if(pendingMessages.length === 0){
+        marquee.innerText = 'Nenhuma mensagem pendente';
+    } else {
+        marquee.innerText = pendingMessages.join('  •  ');
+    }
+}
+setInterval(updateSideMarquee, 30000);
+updateSideMarquee();
+
+function updateSidePanel() {
+    updateSideMarquee();
+}
+
+function showSelectedMessage() {
+    if (selectedMessageIndex === null || !agendaMessages[selectedMessageIndex]) {
+        marqueeTopContainer.style.display = 'none';
+        return;
+    }
+    marqueeTopContainer.style.display = 'block';
+    marqueeTop.innerText = agendaMessages[selectedMessageIndex];
+}
+setInterval(showSelectedMessage, 30000);
+showSelectedMessage();
+
+// ===================== Estatísticas =====================
+document.getElementById('estatBtn').addEventListener('click',()=>{ document.getElementById('estatisticas').style.display='block'; renderStats(); });
+document.getElementById('fecharEstatBtn').addEventListener('click',()=>{ document.getElementById('estatisticas').style.display='none'; });
+function renderStats(){ 
+  const container=document.getElementById('conteudoEstatisticas'); 
+  container.innerHTML=''; 
+  container.innerHTML+=`<div>Total de links: ${links.length}</div>`; 
+  links.forEach(l=>container.innerHTML+=`<div>${l.name} (${l.section})${l.obs ? ' [Obs: '+l.obs+']' : ''} - Clicks: ${l.clicks}</div>`); 
+}
+
+// ===================== Logout =====================
+document.getElementById('logoutBtn').addEventListener('click',()=>{ location.reload(); });
+
+// ===================== Adicionar Link =====================
+document.getElementById('addLinkBtn').addEventListener('click', () => {
+    const section = document.getElementById('sectionInput').value.trim().toUpperCase();
+    const name = document.getElementById('nameLinkInput').value.trim().toUpperCase();
+    const url = document.getElementById('urlInput').value.trim();
+    const obs = document.getElementById('obsInput').value.trim();
+
+    if (!section || !name || !url) {
+        showToast('Preencha os campos obrigatórios (Seção, Nome e URL)');
+        return;
+    }
+
+    links.push({ section, name, url, obs, clicks: 0 });
+    saveUserLinks();
+    renderLinks();
+
+    document.getElementById('sectionInput').value = '';
+    document.getElementById('nameLinkInput').value = '';
+    document.getElementById('urlInput').value = 'https://';
+    document.getElementById('obsInput').value = '';
+
+    showToast('Link adicionado com sucesso');
+});
+
+// ===================== Busca em tempo real (Incluindo Observação) =====================
+const searchInput = document.getElementById('searchInput');
+searchInput.addEventListener('input', () => {
+    const searchTerm = searchInput.value.toLowerCase();
+    const sectionsElems = document.querySelectorAll('.section');
+
+    sectionsElems.forEach(section => {
+        const sectionTitle = section.querySelector('h2').textContent.toLowerCase();
+        const linksElems = section.querySelectorAll('.linkMain');
+        let sectionHasMatch = false;
+
+        linksElems.forEach(link => {
+            const linkText = link.textContent.toLowerCase();
+            const match = linkText.includes(searchTerm) || sectionTitle.includes(searchTerm);
+            link.parentElement.style.display = match ? '' : 'none';
+            if(match) sectionHasMatch = true;
+        });
+
+        section.style.display = sectionHasMatch || searchTerm === '' ? '' : 'none';
+    });
+});
+
+// ===================== Calendário =====================
+const calendarBtn = document.getElementById('calendarBtn');
+const calendarModal = document.getElementById('calendarModal');
+const calendarClose = document.getElementById('calendarClose');
+const calendarMonth = document.getElementById('calendarMonth');
+const calendarNote = document.getElementById('calendarNote');
+const calendarAddBtn = document.getElementById('calendarAddBtn');
+const calendarTable = document.getElementById('calendarTable').querySelector('tbody');
+const calendarList = document.getElementById('calendarList');
+let calendarData = JSON.parse(localStorage.getItem('calendarData')) || [];
+
+function saveCalendar(){ localStorage.setItem('calendarData', JSON.stringify(calendarData)); }
+
+function renderCalendarTable(monthStr){
+    calendarTable.innerHTML='';
+    if(!monthStr) monthStr = new Date().toISOString().slice(0,7);
+    const [y,m] = monthStr.split('-').map(Number);
+    const firstDay = new Date(y,m-1,1).getDay();
+    const daysInMonth = new Date(y,m,0).getDate();
+    let tr = document.createElement('tr');
+    let dayCounter = 1;
+
+    for(let i=0;i<firstDay;i++){ tr.appendChild(document.createElement('td')); }
+
+    for(let i=firstDay;i<7;i++){
+        const td = document.createElement('td');
+        td.innerText = dayCounter;
+        const fullDate = `${y}-${String(m).padStart(2,'0')}-${String(dayCounter).padStart(2,'0')}`;
+        if(calendarData.some(c=>c.date===fullDate)) td.style.background='var(--accent)'; 
+        td.style.cursor='pointer'; td.style.borderRadius='6px';
+        td.addEventListener('click',()=>{ calendarMonth.value = monthStr; calendarNote.focus(); calendarNote.dataset.date = fullDate; });
+        tr.appendChild(td);
+        dayCounter++;
+    }
+    calendarTable.appendChild(tr);
+
+    while(dayCounter<=daysInMonth){
+        tr = document.createElement('tr');
+        for(let i=0;i<7;i++){
+            const td = document.createElement('td');
+            if(dayCounter<=daysInMonth){
+                td.innerText = dayCounter;
+                const fullDate = `${y}-${String(m).padStart(2,'0')}-${String(dayCounter).padStart(2,'0')}`;
+                if(calendarData.some(c=>c.date===fullDate)) td.style.background='var(--accent)';
+                td.style.cursor='pointer'; td.style.borderRadius='6px';
+                td.addEventListener('click',()=>{ calendarMonth.value = monthStr; calendarNote.focus(); calendarNote.dataset.date = fullDate; });
+                dayCounter++;
+            }
+            tr.appendChild(td);
+        }
+        calendarTable.appendChild(tr);
+    }
+}
+
+function renderCalendarList(){
+    calendarList.innerHTML='';
+    if(calendarData.length===0){
+        const empty = document.createElement('li');
+        empty.innerText='Nenhum aviso cadastrado.';
+        empty.style.padding='6px'; empty.style.color= 'var(--muted)';
+        calendarList.appendChild(empty);
+        return;
+    }
+    calendarData.forEach((item,i)=>{
+        const li = document.createElement('li');
+        li.style.padding='6px 10px'; li.style.marginBottom='6px'; li.style.borderRadius='8px'; li.style.background='var(--soft)';
+        li.style.display = 'flex';
+        li.style.justifyContent = 'space-between';
+        li.style.alignItems = 'center';
+        li.innerHTML = `<span><strong>${item.date}</strong>: ${item.note}</span> <button style="background:var(--danger); color:#fff; border:none; border-radius:6px; padding:4px 8px; cursor:pointer;">Excluir</button>`;
+        li.querySelector('button').addEventListener('click', ()=>{
+           calendarData.splice(i,1); saveCalendar(); renderCalendarList(); renderCalendarTable(calendarMonth.value);
+        });
+        calendarList.appendChild(li);
+    });
+}
+
+calendarBtn.addEventListener('click',()=>{
+    calendarModal.style.display='block';
+    calendarMonth.value = new Date().toISOString().slice(0,7);
+    renderCalendarTable(calendarMonth.value);
+    renderCalendarList();
+});
+
+calendarClose.addEventListener('click',()=>{ calendarModal.style.display='none'; });
+
+calendarAddBtn.addEventListener('click',()=>{
+    const date = calendarNote.dataset.date || `${calendarMonth.value}-01`;
+    const note = calendarNote.value.trim();
+    if(!note){ showToast('Digite um aviso'); return; }
+    calendarData.push({date,note});
+    saveCalendar();
+    calendarNote.value=''; delete calendarNote.dataset.date;
+    renderCalendarTable(calendarMonth.value);
+    renderCalendarList();
+    showToast('Aviso adicionado');
+});
+
+calendarMonth.addEventListener('change',()=>{ renderCalendarTable(calendarMonth.value); });
+
+// ===================== Som + Alerta Popup com Data e Hora =====================
+const alertSound = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
+
+function showAlertWithSound(message) {
+  const now = new Date();
+  const dataHora = now.toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "medium" });
+  alertSound.play().catch(()=>{ console.warn("Som bloqueado até interação do usuário."); });
+  alert(`${message}\n\nData e hora: ${dataHora}`);
+}
+</script>
+</body>
+</html>
