@@ -234,7 +234,24 @@ li { display: flex; align-items: center; margin: 8px 0; gap:8px; }
 
   <div id="addLinkForm">
       <input type="text" id="sectionInput" placeholder="Seção">
-      <input type="text" id="nameLinkInput" placeholder="Nome do Link" style="color: #ffffff !important;">
+      <input type="text" id="nameLinkInput" placeholder="Nome do Link" style="/* Cor do texto DEPOIS que você digita nele */
+#nameLinkInput {
+  color: #ffffff !important;
+}
+
+/* Cor do texto do PLACEHOLDER ("Nome do Link") em branco fosco */
+#nameLinkInput::placeholder {
+  color: rgba(255, 255, 255, 0.6) !important; /* O 0.6 deixa ele com um efeito fosco/suave */
+  opacity: 1 !important;
+}
+
+/* Para garantir compatibilidade com navegadores mais antigos */
+#nameLinkInput:-ms-input-placeholder {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+#nameLinkInput::-ms-input-placeholder {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
       <input type="text" id="urlInput" placeholder="URL do Link" value="https://">
       <input type="text" id="obsInput" placeholder="Obs / Usuário / Senha">
       <button id="addLinkBtn">Adicionar Link</button>
