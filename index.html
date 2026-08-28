@@ -20,7 +20,7 @@ html,body{height:100%}
 body {margin:0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto; background: var(--bg); color:var(--text); padding:20px; transition: background 260ms,color 260ms;}
 h1{text-align:center; margin:6px 0 18px 0; font-weight:600;}
 #loginScreen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh; }
-#loginScreen input, #loginScreen button { font-size: 15px; padding: 10px; margin: 6px 0; border-radius: 10px; }
+#loginScreen input, #loginScreen button { font-family: inherit; font-size: 15px; padding: 10px; margin: 6px 0; border-radius: 10px; }
 #loginScreen input { width: 260px; border: 1px solid var(--soft); background: var(--surface); color: var(--text); }
 #loginScreen button { border: none; background-color: var(--accent); color: #fff; cursor: pointer; padding:10px 18px; border-radius:10px; box-shadow: var(--shadow); }
 #loginScreen button:hover { filter:brightness(.95); transform:translateY(-1px); }
@@ -34,14 +34,64 @@ h1{text-align:center; margin:6px 0 18px 0; font-weight:600;}
 #datetime { font-size:13px; color:var(--text); background:var(--glass); padding:10px 14px; border-radius:12px; box-shadow: var(--shadow); }
 
 .controls { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-#searchInput { display: block; width: 100%; max-width: 420px; padding: 10px 12px; font-size: 14px; border-radius: 10px; border:1px solid var(--soft); background:var(--surface); color:var(--text); }
 
-#addLinkForm { display: flex; flex-wrap: wrap; justify-content: center; margin-top: 14px; margin-bottom: 20px; gap:8px; }
-#addLinkForm input, #addLinkForm button { margin: 0; padding: 10px; border-radius: 10px; font-size: 14px; border:1px solid var(--soft); background:var(--surface); color:var(--text); }
-#addLinkForm input { width: 140px; }
-#addLinkBtn { background-color: var(--success); color: #fff; border:none; cursor:pointer; }
-#addLinkBtn:hover{filter:brightness(.95)}
-.actionBtn { background:transparent; border:1px solid var(--soft); color:var(--text); padding:9px 12px; border-radius:10px; cursor:pointer; }
+/* === CAMPO DE BUSCA COM A MESMA FONTE DA SEÇÃO E LINK === */
+#searchInput { 
+  font-family: inherit; 
+  font-weight: 600; 
+  display: block; 
+  width: 100%; 
+  max-width: 420px; 
+  padding: 10px 12px; 
+  font-size: 14px; 
+  border-radius: 10px; 
+  border:1px solid var(--soft); 
+  background:var(--surface); 
+  color:var(--text); 
+}
+#searchInput::placeholder {
+  font-family: inherit;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.65) !important;
+  opacity: 1 !important;
+}
+
+#addLinkForm { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; margin-top: 14px; margin-bottom: 20px; gap:8px; }
+#addLinkForm input { font-family: inherit; margin: 0; padding: 10px; border-radius: 10px; font-size: 14px; border:1px solid var(--soft); background:var(--surface); color:var(--text); width: 140px; }
+
+#addLinkForm input::placeholder {
+  font-family: inherit;
+  color: rgba(255, 255, 255, 0.65) !important;
+  opacity: 1 !important;
+}
+#addLinkForm input:-ms-input-placeholder {
+  color: rgba(255, 255, 255, 0.65) !important;
+}
+#addLinkForm input::-ms-input-placeholder {
+  color: rgba(255, 255, 255, 0.65) !important;
+}
+#addLinkForm input {
+  color: #ffffff !important;
+}
+
+#addLinkBtn { 
+  font-family: inherit;
+  display: inline-block;
+  margin: 0; 
+  padding: 10px 14px; 
+  border:none; 
+  border-radius:10px; 
+  background-color:var(--success); 
+  color:#fff; 
+  cursor:pointer; 
+  font-size: 14px;
+}
+#addLinkBtn:hover{
+  filter:brightness(.95); 
+  transform:translateY(-1px);
+}
+
+.actionBtn { font-family: inherit; background:transparent; border:1px solid var(--soft); color:var(--text); padding:9px 12px; border-radius:10px; cursor:pointer; }
 .actionBtn:hover{transform:translateY(-1px);}
 
 .section { margin-bottom: 14px; border-radius: 12px; box-shadow: 0 6px 18px rgba(3,6,12,0.6); overflow:hidden; background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent); }
@@ -59,13 +109,13 @@ li { display: flex; align-items: center; margin: 8px 0; gap:8px; }
 .linkObs { font-size:11px; color:var(--accent); background:var(--soft); padding:3px 6px; border-radius:6px; margin-left:8px; border: 1px dashed var(--soft); }
 
 .buttonsContainer { margin-left: auto; display: flex; gap: 8px; align-items:center; }
-.linkBtn { padding: 8px 10px; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; display:flex; gap:8px; align-items:center; background:transparent; color:var(--text); border:1px solid var(--soft); }
+.linkBtn { font-family: inherit; padding: 8px 10px; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; display:flex; gap:8px; align-items:center; background:transparent; color:var(--text); border:1px solid var(--soft); }
 .linkBtn:hover{transform:translateY(-2px)}
 .editBtn { color: var(--accent); border-color: rgba(138, 146, 255, 0.15); }
 .deleteBtn { color:var(--danger); border-color: rgba(239,68,68,0.18); }
 .openBtn { color:var(--success); border-color: rgba(46,204,113,0.12); }
 
-#logoutBtn { display: inline-block; margin: 8px 0; padding: 10px 14px; border:none; border-radius:10px; background-color:var(--danger); color:#fff; cursor:pointer; }
+#logoutBtn { font-family: inherit; display: inline-block; margin: 8px 0; padding: 10px 14px; border:none; border-radius:10px; background-color:var(--danger); color:#fff; cursor:pointer; }
 #logoutBtn:hover { filter:brightness(.95); transform:translateY(-1px); }
 
 #toastContainer { position: fixed; right: 18px; bottom: 18px; z-index: 9999; display:flex; flex-direction:column; gap:8px; align-items:flex-end; }
@@ -78,7 +128,7 @@ li { display: flex; align-items: center; margin: 8px 0; gap:8px; }
   .buttonsContainer{ gap:6px; }
 }
 
-/* ===================== Letreiro Topo ===================== */
+/* Letreiro Topo */
 #marqueeTopContainer {
   display:none;
   width:100%;
@@ -103,7 +153,7 @@ li { display: flex; align-items: center; margin: 8px 0; gap:8px; }
   100%{transform: translateX(-100%);}
 }
 
-/* ===================== Modal Agenda ===================== */
+/* Modal Agenda */
 #agendaModal {
   display:none;
   position:fixed;
@@ -132,6 +182,7 @@ li { display: flex; align-items: center; margin: 8px 0; gap:8px; }
 }
 #agendaForm{display:flex; gap:8px; margin-bottom:12px;}
 #agendaForm input{
+  font-family: inherit;
   flex:1;
   padding:8px 10px;
   border-radius:10px;
@@ -140,6 +191,7 @@ li { display: flex; align-items: center; margin: 8px 0; gap:8px; }
   color:var(--text);
 }
 #agendaForm button{
+  font-family: inherit;
   padding:8px 12px;
   border:none;
   border-radius:10px;
@@ -152,11 +204,12 @@ li { display: flex; align-items: center; margin: 8px 0; gap:8px; }
 #agendaList{max-height:200px; overflow-y:auto;}
 #agendaList li{display:flex; justify-content:space-between; align-items:center; padding:6px 10px; background:var(--soft); border-radius:8px; margin-bottom:6px;}
 #agendaList li .btnGroup{display:flex; gap:4px;}
-#agendaList li button{padding:4px 8px; border:none; border-radius:6px; cursor:pointer; background:var(--accent); color:#fff; font-size:12px;}
+#agendaList li button{font-family: inherit; padding:4px 8px; border:none; border-radius:6px; cursor:pointer; background:var(--accent); color:#fff; font-size:12px;}
 #sectionInput, #nameLinkInput {
   text-transform: uppercase;
 }
-/* ===================== Modal Calendário Compacto ===================== */
+
+/* Modal Calendário */
 #calendarModal {
   width: 320px;       
   max-width: 90%;     
@@ -170,6 +223,7 @@ li { display: flex; align-items: center; margin: 8px 0; gap:8px; }
 }
 
 #calendarModal input, #calendarModal button {
+  font-family: inherit;
   font-size: 13px;    
   padding: 5px 8px;
   border-radius: 8px;
@@ -195,7 +249,7 @@ li { display: flex; align-items: center; margin: 8px 0; gap:8px; }
     <button id="enterBtn">Entrar</button>
     <button id="rememberBtn" class="actionBtn">Lembrar</button>
   </div>
-  <small style="color:var(--muted); margin-top:8px;"> <strong></strong></small>
+  <small style="color:var(--muted); margin-top:8px;">Senha padrão: <strong>DESCUBRA</strong></small>
 </div>
 
 <div id="panelScreen">
@@ -206,13 +260,13 @@ li { display: flex; align-items: center; margin: 8px 0; gap:8px; }
     </div>
     <div class="controls">
       <input id="searchInput" placeholder="Buscar por seção, nome, URL ou observação">
-      <button id="themeToggle" class="actionBtn" title="Alterar Tema">  <i class="fa-solid fa-sun"></i></button>
+      <button id="themeToggle" class="actionBtn" title="Alterar Tema"><i class="fa-solid fa-sun"></i></button>
       <button id="exportBtn" class="actionBtn" title="Exportar"><i class="fa-solid fa-download"></i></button>
       <button id="importBtn" class="actionBtn" title="Importar"><i class="fa-solid fa-upload"></i></button>
       <input type="file" id="importFile" accept="application/json" style="display:none">
       <button id="estatBtn" class="actionBtn" title="Estatísticas">Estatísticas</button>
       <button id="limparEstatBtn" class="actionBtn" title="Limpar Estatística">Limpar Estatísticas</button>
-      <button id="agendaBtn" class="actionBtn" title="Agenda de Mensagens">Destacar Mensagens no Painel</button>
+      <button id="agendaBtn" class="actionBtn" title="Mensagens DO Painel">Mensagens Painel</button>
       <button id="calendarBtn" class="actionBtn" title="Calendário">Calendário</button>
       <button id="logoutBtn">Sair</button>
     </div>
@@ -234,24 +288,7 @@ li { display: flex; align-items: center; margin: 8px 0; gap:8px; }
 
   <div id="addLinkForm">
       <input type="text" id="sectionInput" placeholder="Seção">
-      <input type="text" id="nameLinkInput" placeholder="Nome do Link" style="/* Cor do texto DEPOIS que você digita nele */
-#nameLinkInput {
-  color: #ffffff !important;
-}
-
-/* Cor do texto do PLACEHOLDER ("Nome do Link") em branco fosco */
-#nameLinkInput::placeholder {
-  color: rgba(255, 255, 255, 0.6) !important; /* O 0.6 deixa ele com um efeito fosco/suave */
-  opacity: 1 !important;
-}
-
-/* Para garantir compatibilidade com navegadores mais antigos */
-#nameLinkInput:-ms-input-placeholder {
-  color: rgba(255, 255, 255, 0.6) !important;
-}
-#nameLinkInput::-ms-input-placeholder {
-  color: rgba(255, 255, 255, 0.6) !important;
-}
+      <input type="text" id="nameLinkInput" placeholder="Nome do Link">
       <input type="text" id="urlInput" placeholder="URL do Link" value="https://">
       <input type="text" id="obsInput" placeholder="Obs / Usuário / Senha">
       <button id="addLinkBtn">Adicionar Link</button>
@@ -329,7 +366,6 @@ li { display: flex; align-items: center; margin: 8px 0; gap:8px; }
 <div id="toastContainer"></div>
 
 <script>
-// ===================== Variáveis e utilitários =====================
 let currentUser=null;
 const PASSWORD="1234";
 let links=[];
@@ -421,7 +457,6 @@ function showToast(msg,timeout=2500){
   setTimeout(()=>{d.classList.remove('show'); setTimeout(()=>d.remove(),300);},timeout); 
 }
 
-// ===================== Render Links com Observação e Edição =====================
 function renderLinks(filtered = null) {
     const container = document.getElementById('linksContainer');
     container.innerHTML = '';
@@ -488,7 +523,6 @@ function renderLinks(filtered = null) {
             const btnsDiv = document.createElement('div');
             btnsDiv.className = 'buttonsContainer';
 
-            // Botão Editar (Carrega dados de volta, inclusive a observação)
             const editBtn = document.createElement('button');
             editBtn.className = 'linkBtn editBtn';
             editBtn.innerHTML = '<i class="fa-solid fa-pen"></i>';
@@ -504,7 +538,6 @@ function renderLinks(filtered = null) {
             });
             btnsDiv.appendChild(editBtn);
 
-            // Botão Deletar
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'linkBtn deleteBtn';
             deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
@@ -516,7 +549,6 @@ function renderLinks(filtered = null) {
             });
             btnsDiv.appendChild(deleteBtn);
 
-            // Botão Abrir
             const openBtn = document.createElement('button');
             openBtn.className = 'linkBtn openBtn';
             openBtn.innerHTML = '<i class="fa-solid fa-arrow-up-right-from-square"></i>';
@@ -534,7 +566,6 @@ function renderLinks(filtered = null) {
     });
 }
 
-// ===================== Login =====================
 document.getElementById('enterBtn').addEventListener('click',()=>{
   const name=document.getElementById('nameInput').value.trim();
   const pass=document.getElementById('passwordInput').value;
@@ -545,7 +576,6 @@ document.getElementById('enterBtn').addEventListener('click',()=>{
   updateDateTime(); loadUserLinks(); renderLinks(); renderAgenda();
 });
 
-// ===================== Agenda de Mensagens =====================
 let agendaMessages=JSON.parse(localStorage.getItem('agendaMessages'))||[];
 let selectedMessageIndex=null;
 const agendaBtn=document.getElementById('agendaBtn');
@@ -617,7 +647,6 @@ function showSelectedMessage() {
 setInterval(showSelectedMessage, 30000);
 showSelectedMessage();
 
-// ===================== Estatísticas =====================
 document.getElementById('estatBtn').addEventListener('click',()=>{ document.getElementById('estatisticas').style.display='block'; renderStats(); });
 document.getElementById('fecharEstatBtn').addEventListener('click',()=>{ document.getElementById('estatisticas').style.display='none'; });
 function renderStats(){ 
@@ -627,10 +656,8 @@ function renderStats(){
   links.forEach(l=>container.innerHTML+=`<div>${l.name} (${l.section})${l.obs ? ' [Obs: '+l.obs+']' : ''} - Clicks: ${l.clicks}</div>`); 
 }
 
-// ===================== Logout =====================
 document.getElementById('logoutBtn').addEventListener('click',()=>{ location.reload(); });
 
-// ===================== Adicionar Link =====================
 document.getElementById('addLinkBtn').addEventListener('click', () => {
     const section = document.getElementById('sectionInput').value.trim().toUpperCase();
     const name = document.getElementById('nameLinkInput').value.trim().toUpperCase();
@@ -654,7 +681,6 @@ document.getElementById('addLinkBtn').addEventListener('click', () => {
     showToast('Link adicionado com sucesso');
 });
 
-// ===================== Busca em tempo real (Incluindo Observação) =====================
 const searchInput = document.getElementById('searchInput');
 searchInput.addEventListener('input', () => {
     const searchTerm = searchInput.value.toLowerCase();
@@ -676,7 +702,6 @@ searchInput.addEventListener('input', () => {
     });
 });
 
-// ===================== Calendário =====================
 const calendarBtn = document.getElementById('calendarBtn');
 const calendarModal = document.getElementById('calendarModal');
 const calendarClose = document.getElementById('calendarClose');
@@ -776,7 +801,6 @@ calendarAddBtn.addEventListener('click',()=>{
 
 calendarMonth.addEventListener('change',()=>{ renderCalendarTable(calendarMonth.value); });
 
-// ===================== Som + Alerta Popup com Data e Hora =====================
 const alertSound = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
 
 function showAlertWithSound(message) {
